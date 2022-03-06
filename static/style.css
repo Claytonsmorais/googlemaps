@@ -1,0 +1,57 @@
+*{
+	margin: 0;
+	padding :0;
+	box-sizing: border-box;
+	font-family: 'Montserrat', sans-serif;
+}
+
+html,body{
+	height: 100%;
+}
+
+body .container{
+    text-align: center;
+    margin-top: 5rem;
+}
+
+label[for="file"] {
+    cursor: pointer;
+    padding: 10px;
+    border: 1px solid #42a3b8;
+    border-radius: 4px;
+    background-color: #42a3b8;
+    color: white;
+ }
+
+ label[for="file"]:hover{
+     background-color: rgba( 66, 163, 184,0.5);
+ }
+
+ 
+ #file {
+    opacity: 0;
+    position: absolute;
+    z-index: -1;
+ }
+
+ #linha_1{
+     justify-content:center;
+ }
+
+ #inner_linha_1{
+     align-items: center;
+ } 
+
+ #errors{
+     margin-top: 10px;
+     justify-content: center;
+ }
+
+ div.modal-body{
+     text-align: center;
+ }
+
+ #mapa{
+     margin-top: 10px;
+     height: 500px;
+ }
