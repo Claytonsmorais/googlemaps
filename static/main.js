@@ -47,7 +47,7 @@ function initMap() {
         strokeColor: "#FF0000",
         strokeOpacity: 0.8,
         strokeWeight: 1,
-        fillColor: "#DAF0E3",
+        fillColor: "#BFE3FF",
         fillOpacity: 0.4,
         map,
         center: sorocaba,
