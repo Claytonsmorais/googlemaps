@@ -38,7 +38,7 @@ function initMap() {
     locations.forEach(element => {
         new google.maps.Marker({
             position: element.code,
-            title:`${element.location}\nDistância de Sorocaba(Dirigindo):${element.distancia}\nInfo:${element.info}\nDistância Sorocaba (Linha Reta): ${element.dist_rad} Km`,
+            title:`${element.location}\nDistância de Sorocaba(Dirigindo):${element.distancia}\nInfo:${element.info}\nDistância de Sorocaba (Linha Reta): ${element.dist_rad} Km`,
             map: map,
         });
     });
