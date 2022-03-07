@@ -4,7 +4,7 @@ from werkzeug.utils import secure_filename
 from flask import send_from_directory,render_template
 from main import process_file
 import googlemaps
-geolocate = googlemaps.Client(key='AIzaSyAc-r4Q2x3OLSvJgXZT7BnsCAbit8rSnog')
+geolocate = googlemaps.Client(key=os.environ['GEOLOCATE_API_KEY'])
 
 import openpyxl
 
@@ -18,25 +18,27 @@ app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 @app.route('/resultado')
 def resultado():
     locations = []
+    sorocaba = None
     arquivo = os.path.join(app.config["UPLOAD_FOLDER"], 'retorno.xlsx')
-    wb_obj = openpyxl.load_workbook(arquivo)
-    sheet_obj = wb_obj.active
-    for x in sheet_obj.iter_rows(min_row=2, max_row=sheet_obj.max_row, min_col=1, max_col=6):
-        location = '{},{}'.format(x[1].value,x[0].value)
-        distancia_sorocaba = '{} Km'.format(round(x[3].value/1000,2))
-        info = x[5].value
-        locations.append({'location':location,
-                          'code':None,
-                          'distancia':distancia_sorocaba,
-                          'info':info
-                          })
+    if os.path.exists(arquivo):
+        wb_obj = openpyxl.load_workbook(arquivo)
+        sheet_obj = wb_obj.active
+        for x in sheet_obj.iter_rows(min_row=2, max_row=sheet_obj.max_row, min_col=1, max_col=6):
+            location = '{},{}'.format(x[1].value,x[0].value)
+            distancia_sorocaba = '{} Km'.format(round(x[3].value/1000,2))
+            info = x[5].value
+            locations.append({'location':location,
+                              'code':None,
+                              'distancia':distancia_sorocaba,
+                              'info':info
+                              })
 
-    sorocaba = geolocate.geocode(address='Sorocaba,SP',language='pt_BR')
-    sorocaba = sorocaba[0]['geometry']['location']
+        sorocaba = geolocate.geocode(address='Sorocaba,SP',language='pt_BR')
+        sorocaba = sorocaba[0]['geometry']['location']
 
-    for y,x in enumerate(locations):
-        location = geolocate.geocode(address=x['location'],language='pt_BR')
-        locations[y]['code']=location[0]['geometry']['location']
+        for y,x in enumerate(locations):
+            location = geolocate.geocode(address=x['location'],language='pt_BR')
+            locations[y]['code']=location[0]['geometry']['location']
 
     return render_template('resultado.html',sorocaba=sorocaba,locacoes=locations)
 

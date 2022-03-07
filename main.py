@@ -1,7 +1,7 @@
 import os
 import googlemaps
 import openpyxl
-gmaps = googlemaps.Client(key='AIzaSyCXi-8bUjZ2lEyac9VbHkPHCjrCF-kLFCE')
+gmaps = googlemaps.Client(key=os.environ['DISTANCE_API_KEY'])
 
 
 def chunks(lst, n):
