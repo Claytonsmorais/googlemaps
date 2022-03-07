@@ -2,3 +2,4 @@ openpyxl==3.0.9
 googlemaps==4.6.0
 Flask
 gunicorn==20.1.0
+haversine==2.5.1

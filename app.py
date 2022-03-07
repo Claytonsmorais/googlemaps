@@ -5,6 +5,7 @@ from flask import send_from_directory,render_template
 from main import process_file
 import googlemaps
 geolocate = googlemaps.Client(key=os.environ['GEOLOCATE_API_KEY'])
+from haversine import haversine, Unit
 
 import openpyxl
 
@@ -36,9 +37,19 @@ def resultado():
         sorocaba = geolocate.geocode(address='Sorocaba,SP',language='pt_BR')
         sorocaba = sorocaba[0]['geometry']['location']
 
+        lat_sor = sorocaba['lat']
+        lng_sor = sorocaba['lng']
+
+        sor_coord = (lat_sor,lng_sor)
+
         for y,x in enumerate(locations):
             location = geolocate.geocode(address=x['location'],language='pt_BR')
             locations[y]['code']=location[0]['geometry']['location']
+            lat = location[0]['geometry']['location']['lat']
+            lng = location[0]['geometry']['location']['lng']
+            loc = (lat,lng)
+            locations[y]['dist_rad'] = round(haversine(sor_coord,loc),2)
+
 
     return render_template('resultado.html',sorocaba=sorocaba,locacoes=locations)
 

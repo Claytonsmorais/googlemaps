@@ -38,8 +38,20 @@ function initMap() {
     locations.forEach(element => {
         new google.maps.Marker({
             position: element.code,
-            title:`${element.location}\nDistância de Sorocaba:${element.distancia}\nInfo:${element.info}`,
+            title:`${element.location}\nDistância de Sorocaba(Dirigindo):${element.distancia}\nInfo:${element.info}\nDistância Sorocaba (Linha Reta): ${element.dist_rad} Km`,
             map: map,
         });
     });
+
+    new google.maps.Circle({
+        strokeColor: "#FF0000",
+        strokeOpacity: 0.8,
+        strokeWeight: 1,
+        fillColor: "#DAF0E3",
+        fillOpacity: 0.4,
+        map,
+        center: sorocaba,
+        radius: 200 * 1000,
+    });
+    
 }     
