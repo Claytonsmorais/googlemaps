@@ -1,6 +1,9 @@
 import os
 import openpyxl
-from utils import chunks
+from db.models import City
+from db.utils import Database
+from config import ALLOWED_EXTENSIONS
+
 
 def allowed_file(filename):
     return '.' in filename and \
@@ -13,19 +16,52 @@ def chunks(lst, n):
         yield lst[i:i + n]
 
 
-def process_file(arquivo,gmaps_distance,gmaps_locate):
-    origin = '{},{}'.format(os.environ['LOCATION_ORIGIN_CITY'],os.environ['LOCATION_ORIGIN_STATE'])
-    wb_obj = openpyxl.load_workbook(arquivo)
-    sheet_obj = wb_obj.active
 
+def get_data_from_sheet(sheet):
+    wb_obj = openpyxl.load_workbook(sheet)
+    sheet_obj = wb_obj.active
     linhas = sheet_obj.max_row
 
     linha_ini = 2
     destinos = []
     while linha_ini <= linhas:
-        destino = '{},{}'.format(sheet_obj.cell(linha_ini, 2).value, sheet_obj.cell(linha_ini, 1).value)
         linha_ini += 1
-        destinos.append(destino)
+        destinos.append(
+            {
+                'city':sheet_obj.cell(linha_ini, 2).value,
+                'state':sheet_obj.cell(linha_ini, 1).value
+            }
+        )
+    return destinos
+
+def find_lat_lng(gmaps_locate,adderss):
+    coords = gmaps_locate.geocode(address=adderss, language='pt_BR')
+    return coords[0]['geometry']['location']['lat'],coords[0]['geometry']['location']['lng']
+
+
+
+def process_file(arquivo,gmaps_distance,gmaps_locate):
+    origin = '{},{}'.format(os.environ['LOCATION_ORIGIN_CITY'],os.environ['LOCATION_ORIGIN_STATE'])
+    destinos = get_data_from_sheet(arquivo)
+
+    for destino in destinos:
+        if destino['city'] and destino['state']:
+            city = City()
+            city.name = destino['city']
+            city.state = destino['state']
+            driver = Database().driver
+            busca = City.search(city,driver)
+            if not busca:
+                address = '{},{}'.format(destino['city'],destino['state'])
+                coords = find_lat_lng(gmaps_locate,address)
+                n_city = City(
+                    name=destino['city'],
+                    state=destino['state'],
+                    latitude=coords[0],
+                    longitude=coords[1]
+                ).save()
+                print(n_city)
+
 
     chunks_s = list(chunks(destinos, 20))
 

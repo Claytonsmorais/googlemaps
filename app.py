@@ -5,14 +5,10 @@ from flask import send_from_directory, render_template
 from utils import process_file, allowed_file
 import googlemaps
 from haversine import haversine
-
-
-
-
+from config import UPLOAD_FOLDER
 import openpyxl
+from db.utils import Database
 
-UPLOAD_FOLDER = os.path.join('arquivos')
-ALLOWED_EXTENSIONS = {'xlsx'}
 
 app = Flask(__name__)
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
